@@ -30,6 +30,7 @@ knitr::opts_chunk$set(echo = TRUE)
     - Conditional
 - Please signup for Odyessy!
 
+[link to setup](https://docs.google.com/forms/d/e/1FAIpQLSc4JNuvRpNUO5kNbvF1gLWI8UOp34pwZhIf6Okwf7YoH4ymeQ/viewform)
 
 ---
 
