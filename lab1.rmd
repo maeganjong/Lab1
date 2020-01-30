@@ -1,85 +1,97 @@
 ---
-title: "Stat 115/215: Introduction to Computational Biology"
-subtitle: "Lab 1"
+title: "Lab 1"
+subtitle: "Introductory Computing -1"
 author: "Qing Zhang"
-date: "1/28/2020 - 1/29/2020"
-output: slidy_presentation
+date: "Updated: `r Sys.Date()`"
+fig_height: 5
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+
+
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+# This week:
+## Introductory Computing 1
 
-### Introductory Computing 1
+.pull-left[
+### Odyssey & logistics
+### R/RStudio;
+- Download and Install
+- Basic commands
+- Getting Help
+- Bioconductor
+- Data manipulation
+    - Introduction to dplyr
+    - filter, summarize, groupby, mean
+    - Pipe `%>%`
+- Plotting
+]
 
-- R/RStudio
-    - Download and Install
-    - Basic commands
-    - Getting Help
-    - Bioconductor
-    - Data manipulation
-        - Introduction to dplyr
-        - filter, summarize, groupby, mean
-        - Pipe `%>%`
-    - Plotting
-- Bash scripting
-    - Getting help
-    - STDIN/STDOUT, pipe
-    - Math
-    - Variable
-    - Conditional
+.pull-right[
+### Bash scripting;
+- Getting help
+- STDIN/STDOUT, pipe
+- Math
+- Variable
+- Conditional
 - Please signup for Odyessy!
+]
 
-[link to setup](https://docs.google.com/forms/d/e/1FAIpQLSc4JNuvRpNUO5kNbvF1gLWI8UOp34pwZhIf6Okwf7YoH4ymeQ/viewform)
+
 
 ---
 
 
-Next week:
+# Next week:
 
-### Introductory Computing 2
-
+## Introductory Computing 2
+    
 - Python File Parsing
 - A Trip to Odyssey
     - BWA and STAR
 - HW1 Questions
 
 ---
+class: inverse, center, middle
 
-#### Intro to R
+# Get Started
+
+
+---
+
+# Odyssey Signup
+
+Please fill in signup form on Canvas! Due today!
+
+
+---
+# Homework logistics
 
 This is an R Markdown document that I have output to an HTML presentation. Markdown is a simple formatting syntax for producing HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-Each homework will be completed in this format and you will submit both the markdown document with code (.Rmd) and the compiled document (.html). With this format all necessary code (including python code!) may be included in one source and the graders may easily reproduce your results.
+Each homework will be completed in this format and you will submit both the markdown document with code (.Rmd) and the compiled document (.html). **You only need to submit html for HW1**. With this format all necessary code (including python/bash code!) may be included in one source and the graders may easily reproduce your results.
 
 Homework files will be provided in several sources depending on thir type/size. Canvas will contain the problem sets and you will submit your completed homework here. GitHub will also contain the problem sets as well as necessary (small) datasets, etc. The Odyssey cluster will contain larger datafiles (/n/stat115/) and will be necessary for high performance computing later in the semester.
 
-But first, let's get R/RStudio downloaded!
+First, let's get R/RStudio downloaded!
+[Download R](https://www.r-project.org/) and [Rstudio](https://rstudio.com/products/rstudio/)
 
-[Download R](https://www.r-project.org/)
-[Download Rstudio](https://rstudio.com/products/rstudio/)
 
----
-
-Before we get into knitting, let's consider the concept of a working directory.
-
-```{r, eval=FALSE, echo=TRUE}
-# where am I
-getwd()
-
-# change where I am (use the RStudio Session > Set Working Directory >
-# To Source File Location)
-setwd("~/Downloads/")
-
-```
 
 ---
+
+# Install Packages from CRAN
 
 We often want to install packages to add some extra functionality on top of base R (https://cran.r-project.org/). To do so, we need to know the name of the package (often found via a google search) and we need to install it. Once installed, we need to load the package into the namespace. 
 
 Let's try to install the `nycflights13` package.
 
-```{r, eval=FALSE,echo=TRUE}
+```{r, eval=FALSE,echo=TRUE, message=FALSE}
 install.packages("nycflights13")
 install.packages("ggplot2")
 install.packages("dplyr")
@@ -87,7 +99,7 @@ install.packages("dplyr")
 
 Load the packages using the `library` command.
 
-```{r}
+```{r, message=FALSE}
 library(nycflights13)
 library(ggplot2)
 library(dplyr)
@@ -97,15 +109,37 @@ Now make sure to open the markdown document and follow along! Download either fr
 
 ---
 
-#### Quick GitHub Detour
+# Install package from Bioconductor
+
+We already discussed how to install and load libraries coming from CRAN (a.k.a. `install.packages("pkgname")`). However, often we will want to install packages from other sources. In computational biology, many of these will come from [Bioconductor](www.bioconductor.org).
+
+The process is much the same, but now we need to tell R to look in there instead of a CRAN mirror.
+
+```{r,eval=FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("affy", version = "3.10")
+```
+
+Once it's been downloaded we can simply load it via the library call.
+
+```{r, message=FALSE}
+library(affy)
+```
+
+---
+
+# Quick GitHub Detour
 
 GitHub is a version control system that we will be using primarily as a repository for the homeworks and labs. It is a great tool and we recommend learning and utilizing GitHub for your own work. Lots of tutorials are available such as (https://guides.github.com/activities/hello-world/). 
 
 You will only be required to download the homework files and labs but there are many more features worth learning (commiting, branching, etc.). But first, let's download the lab files.
 
+*Please do NOT disclose your homework answer on public Github Repos!*
+
 ---
 
-#### Quick GitHub Detour
+# Quick GitHub Detour
 
 - First, register for an account (https://github.com/join)
     - Students get some great extras free for two years as well (https://education.github.com).
@@ -123,33 +157,29 @@ You will only be required to download the homework files and labs but there are 
 
 ---
 
-#### R Markdown: Reproducible reports
+# Reproducible reports in R markdown
 
-To submit your homework you will need to knit the homework .Rmd file and submit both the html and the code. 
+To submit your homework you will need to knit the homework .Rmd file.
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r}
-# we can adjust the size/level of the text
 # Big
 ## Kinda big
 ### Still biggish
-#### Pretty Normal
-```
+
+---
 
 You can also **bold** or *italicize* text easily. LaTex code may be added inline, such as $\sum_{i=1}^{N} x_i$, as well as inline `code`. Images are very easy to display as well (see above). To suppress code, name chunks, etc. we need to specify the option to the R code chunk. Note that `echo=FALSE` may be added and the code chunk will not be shown at all.
 
-```{r section_name, eval=FALSE}
-# sample code block
+```{r section_name, eval=TRUE}
+print("hello world!")
 ```
 
 ---
 
-#### R Markdown
-
 You can also embed plots, for example:
 
-```{r fig.width=7, fig.height=6}
+```{r fig.height=4}
 library(ggplot2)
 library(dplyr)
 flights %>%
@@ -157,15 +187,35 @@ flights %>%
     ggtitle("Arrival Delays for Flights in NYC Area")
 ```
 
----
-
-#### R Markdown
 
 A great cheatsheet is available [here](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf).
 
+
 ---
 
-#### Intro to  R
+# Working directory
+
+```{r, eval=FALSE, echo=TRUE}
+# where am I
+getwd()
+
+# change where I am (use the RStudio Session > Set Working Directory >
+# To Source File Location)
+setwd("~/Downloads/")
+
+```
+
+
+
+---
+class: inverse, center, middle
+
+# R basics
+
+
+---
+
+# Data types and Data sturctures in R
 
 Now we will go over basic R commands and data structures.
 
@@ -188,25 +238,20 @@ R has many data structures. These include
 
 ---
 
-#### R Vectors
+# R Vectors
 
-R is by nature vectorized.
+R is by nature vectorized, (which is different from Python list).
 
 ```{r}
 x <- c(1,2,3,4,5) 
-
-# Index
-print(x[1])
+print(x[1]) # Index by number
 
 # Operations are performed to each element
 x^2
 sqrt(x)
 
 # Vectors may be logical as well
-y <- x<3 
-print(y)
-print(x[y])
-
+print(x[x<3]) # Index by logical vector
 
 # initialize an empty vector
 vector("numeric", 5)
@@ -214,35 +259,34 @@ vector("numeric", 5)
 
 ---
 
-#### R Matrices
+# R Matrices
 
 Matrices is a R vector with dimension attribute. It is also atomic.
 
 ```{r}
 y <- matrix(1:8,nrow=2,ncol=4,byrow=FALSE) # Create a 2x4 matrix
+str(y)
+
 y[1,2] # Access first row second column
 y[,2] # Access the second column
 dim(y) # Size of y
 y %*% t(y) # Matrix multiplication
 ```
 
-If we remove the dimensions:
+Try `dim(y) <- NULL` and see what will happen.
 
-```{r}
-dim(y) <- NULL
-y
-```
 
 ---
 
-#### R list
+# R list
 
 A list is a generic vector containing other objects.
 
 ```{r}
 # Create a list containing a vector, a matrix and a list.
-list_data <- list(c("Jan","Feb","Mar"), matrix(c(3,9,5,1,-2,8), nrow = 2),
-   list("green",12.3))
+list_data <- list(c("Jan","Feb","Mar"), 
+                  matrix(c(3,9,5,1,-2,8), nrow = 2),
+                  list("green",12.3))
 
 # Give names to the elements in the list.
 names(list_data) <- c("1st Quarter", "A_Matrix", "A Inner list")
@@ -250,8 +294,6 @@ names(list_data) <- c("1st Quarter", "A_Matrix", "A Inner list")
 # Show the list
 str(list_data)
 
-# initialize an empty list
-vector("list", 5)
 ```
 
 
@@ -259,69 +301,55 @@ vector("list", 5)
 
 ---
 
-#### R Data Frames
+# R Data Frames
+
+Dataframes are list of R vectors of same `length`.
 
 ```{r}
-policy.number <- c("A00187", "A00300","A00467","A01226")
-issue.age <- c(74,30,68,74)
-sex <- c("F", "M", "M", "F")
-smoke <- c("S","N","N","N")
-face.amount <- c(420, 1560, 960, 1190)
-ins.df <- data.frame(policy.number, issue.age, sex, smoke, face.amount) # Create it
-
-ins.df[1,] # access first row
-ins.df[,1] # access first column
-ins.df$policy.number # access policy number column
-colnames(ins.df) # column names
-dim(ins.df)
+data(mtcars) # a famous dataset
+str(mtcars) # a list of list of numerical vectors
 ```
 
-Can you tell the difference between `mtcars[,1]` and `mtcars[[1]]`?
+---
 
-Data Frame is lists of same length.
+```{r}
+mtcars[1,1]
+head(mtcars[1])
+head(mtcars[[1]])
+sapply(mtcars, sum)
+```
+
+Can you tell the difference between `mtcars[1]` and `mtcars[[1]]`?
+
 
 --- 
 
-#### Getting Help
+# Getting Help
 
 - `?` command, e.g. `?median`
 - Google or Stackoverflow
+- Github issue or PR.
 
-![](figures/stackoverflow.jpeg)
 
----
-
-#### Bioconductor
-
-We already discussed how to install and load libraries coming from CRAN. However, often we will want to install packages from other sources. In computational biology, many of these will come from [Bioconductor](www.bioconductor.org).
-
-The process is much the same, but now we need to tell R to look in there instead of a CRAN mirror.
-
-```{r,eval=FALSE}
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-BiocManager::install("affy", version = "3.10")
-```
-
-Once it's been downloaded we can simply load it via the library call.
-
-```{r}
-library(affy)
-```
 
 ---
 
-#### Intro to dplyr package
+# Data Manipulation with `dplyr`
 
-- `dplyr` is an R package or "grammar" that makes it really easy and intuitive to
-manipulate data.
+- `dplyr` is an R package or "grammar" that makes it really easy and intuitive to manipulate data.
 - Data science (and computational biology) is 80% data cleaning, 20%
 analysis.
 - Material taken from dplyr vignette: https://cran.r-project.org/web/packages/dplyr/vignettes/dplyr.html
 
+```{r}
+head(flights)
+```
+
+
+
 ---
 
-#### filter
+## filter
 
 - Select specific rows based on conditions.
 
@@ -331,7 +359,7 @@ filter(flights, month == 1, day == 1)
 
 ---
 
-#### select
+## select
 
 - Select specific columns
 
@@ -341,7 +369,7 @@ select(flights, year, month, day)
 
 ---
 
-#### mutate
+## mutate
 
 - Add new columns
 
@@ -354,7 +382,7 @@ mutate(flights,
 
 ---
 
-#### arrange
+## arrange
 
 - Sort dataframe by columns.
 
@@ -364,7 +392,7 @@ arrange(flights, year, month, day)
 
 ---
 
-#### desc
+## desc
 
 - Use `desc` to sort by descending order.
 
@@ -376,7 +404,7 @@ arrange(flights, desc(arr_delay))
 ---
 
 
-#### summarize
+## summarize
 
 - Take many numbers and condense them into 1 number.
 
@@ -388,7 +416,7 @@ summarise(flights,
 
 ---
 
-#### group_by
+## group_by
 
 - The true power of `dplyr` is its capacity for `Split-apply-aggregate` workflow.
 - First, group by plane. Then, summarize the number of flights, average
@@ -407,12 +435,11 @@ delay
 
 ---
 
-#### The pipe, part 1
+# The pipe
 
-When you manipulate data with dplyr, you always have to save the
-result to a new variable. 
+How to process data for multiple steps? Consider:
 
-```{r}
+```{r, message=FALSE}
 a1 <- group_by(flights, year, month, day)
 a2 <- select(a1, arr_delay, dep_delay)
 a3 <- summarise(a2,
@@ -421,12 +448,11 @@ a3 <- summarise(a2,
 a4 <- filter(a3, arr > 30 | dep > 30)
 ```
 
+Seems some variables are wasted.. 
+
 ---
 
-#### The pipe, part 2
-
-If you don't want to rename intermediate results, you have to wrap
-the function calls inside each other:
+What about this one:
 
 ```{r}
 filter(
@@ -442,9 +468,11 @@ filter(
 )
 ```
 
+Yuk!
+
 ---
 
-#### The pipe, part 3
+# The pipe ` %>% `
 
 But this can be hard to read, since we are going inside-out. Instead,
 we can use the `%>%` command, which turns `f(x, y)` into `x %>% f(y)`.
@@ -461,9 +489,15 @@ flights %>%
   filter(arr > 30 | dep > 30)
 ```
 
+Pipe is not invented in `dplyr`, but `magrittr`. It can also be used in other senarios.
+
+```{r}
+letters %>% length()
+```
+
 ---
 
-#### group_by example
+### Pipe with `group_by`
 
 - What is this code doing?
 
@@ -476,11 +510,9 @@ flights %>% filter(origin == "EWR") %>%
 
 ---
 
-#### Plotting
+# Plotting with `ggplot2`
 
-- We will use `ggplot` from the `ggplot2` package.
-
-```{r}
+```{r, fig.height=4}
 flights %>%
     filter(arr_delay <= 360) %>%
     ggplot(aes(x = factor(month), y = arr_delay, color = origin)) +
@@ -491,10 +523,8 @@ flights %>%
 ```
 
 ---
-
-#### Plotting
-
-```{r}
+# Plotting with `ggplot2`
+```{r, fig.height=4}
 flights %>%
     filter(month == 1, arr_delay < 360, dep_delay < 360) %>%
     ggplot(aes(x = dep_delay, y = arr_delay)) +
@@ -504,59 +534,93 @@ flights %>%
     ylab("Arrival Delay (min)")
 ```
 
+A great introduction for `ggplot2` can be found [here](https://ggplot2.tidyverse.org/#learning-ggplot2).
+
+
 
 
 ---
+class: inverse, center, middle
 
-### Bash Shell
+# Bash basics
 
-Lets start with file navigation
+---
+
+# What is bash?
+
+> Bash is a command processor that typically runs in a text window where the user types commands that cause actions. Bash can also read and execute commands from a file, called a shell script.
+
+# Why we use it?
+
+- When you do not have a graphical user interface, i.e. no icons, no mouse ..
+- When you want to execute commands for 100,000 times (or if you have 100,000 files to open) that may be too much for your mouse click.
+
+---
+
+# Bash commands
+
+## File navigation
 
 ```
-cd # change directory, 
-# note that "~" is for your home directory, and `cd -` goes back to your previous directory
+cd # change directory
 ls # list directory content
 ls ..
 ```
 
 In general, a shell command is composed of 
-
 > [command] [options] [arguments]
+
+White spaces are vitally important for parsing each command, which is different from R and python.
 
 ```
 ls -alh ..
 wc -l states.txt
 ```
 
-You can use Pipes (`|`) to stream STDOUT from previous command as STDIN of subsequent command. e.g. `cat states.txt | wc -l`. What will happen when you use `yes | head -n 5`?
+---
+# Pipe
+
+You can use Pipes (`|`) to stream STDOUT from previous command as STDIN of subsequent command. 
+
+```{r, engine='bash', eval=TRUE}
+cat states.txt | wc -l
+```
+
+What will happen when you use `yes | head -n 5`?
+
+# Getting help
 
 If you need help for a specific command, use `man [command]`.
 
 ---
 
 
-### Bash scripting
+# Tools for Bash scripting
 
-Bash itself is a little programming language, to fully extend its power you
-need to write program. 
+Bash itself is a little programming language, to fully extend its power you will need to write program - a text file with a header specifying which program to execute the file.
 
-To write a program you will need an editor. Let's try vim.
+To write a program you will need an editor. 
+Vim is one of the options. To get started with Vim, please use `vi [file]`.
 
-![](figures/vim.jpg)
+## Why use text editor?
+
+Again because you might not have another choice (e.g. MS office, notepad, VS code) on cluster or cloud VMs.
 
 
 ---
 
-If you do not know some basics of VIM, what would happen ...
+# Vim: Basic concepts
 
-![](figures/exit_vim.jpeg)
+You do not need to be an expert in it! Most of the time you will write a program locally and use file transfer tool, e.g. File to Odyssey.
+
+```{r, fig.height=5, echo=FALSE, fig.width=4}
+knitr::include_graphics("figures/vim-modes.png")
+```
 
 ---
 
 
-#### Basic concepts
-
-![vim-modes](figures/vim-modes.png)
+When you `vi filename` you will be on command mode. 
 
 - `i` switch to insert mode
 - `Esc` back to command mode
@@ -572,28 +636,31 @@ Some references:
 - [Games](https://vim-adventures.com/) Interactive games to learn VIM
 - [Cheatsheet](https://rumorscity.com/2014/08/16/5-best-vim-cheat-sheet/) You can have one near your desk
 
+```{r, fig.height=2, fig.width=2, echo=FALSE}
+knitr::include_graphics("figures/exit_vim.jpeg")
+```
+
+
 ---
 
-#### Getting Help
+# Hello World!
 
-Now let's create a new file called `math.sh` in the `~/Code/` directory
-and let's open that file with either `nano` or Atom.
+Let's create a shell sript called `hello.sh`
 
 ```{r, engine='bash', eval=FALSE}
-cd ~/Code/
 vi hello.sh
 ```
 
-shellbang as the first line so that it is interpreted as an executable file
+This sequence of characters (`#!`) is called shebang (`#!interpreter [arguments]`) and is used to tell the operating system which interpreter to use to parse the rest of the file.
 
 ```
 #!/usr/bin/bash
 echo Hello world!
 ```
 
-----
+---
 
-#### Math
+# Math
 
 The Bash programming language can do very basic arithmetic, which we'll
 demonstrate in this section.
@@ -603,11 +670,9 @@ into your text editor:
 ```
 #!/usr/bin/bash
 expr 5 + 2
-expr 5 - 2
 expr 5 \* 2
 expr 5 / 2
 expr 40 % 21
-expr 40 % 20
 ```
 
 Save `math.sh` and then run this script in your shell:
@@ -618,39 +683,28 @@ bash math.sh
 
 ```
 ## 7
-## 3
 ## 10
 ## 2
 ## 19
-## 0
-```
-
-If you want to do more complex math, for example math with fractions and numbers
-with decimals then I highly suggest combining `echo` and the **b**ench **c**alculator
-program called `bc`. 
-
-```{r, engine='bash', eval=TRUE}
-echo "(6.5 / 0.5) + (6 * 2.2)" | bc -l
 ```
 
 ---
 
-#### Variables
+# Variables
 
 In Bash you can store data in variables. 
-You can assign data to a variable using the equals sign (`=`). The data you
-store in a variable can either be a string or a number. Let's create a variable
-now on the command line:
+You can assign data to a variable using the equals sign (`=`). The data you store in a variable can either be a string or a number. Let's create a variable now on the command line:
 
 ```{r, engine='bash', eval=TRUE}
 lab_number=1
 echo $lab_number
+the_empire_state="New York"
+echo $the_empire_state
 ```
 
 Note that white-spaces are not allowed here.
 
-You can modify the value of a variable using arithmetic operators by using the
-`let` command:
+You can modify the value of a variable using arithmetic operators by using the `let` command:
 
 ```{r, engine='bash', eval=FALSE}
 lab_number=1
@@ -658,16 +712,10 @@ let lab_number=$lab_number+1
 echo $lab_number
 ```
 
-You can also store strings in variables:
+---
+# Variables
 
-```{r, engine='bash'}
-the_empire_state="New York"
-echo $the_empire_state
-```
-
-Occasionally you might want to run a command like you would on the command line
-and store the result of that command in a variable. We can do this by wrapping
-the command in a dollar sign and parentheses (`$( )`) around a command.
+Occasionally you might want to run a command like you would on the command line and store the result of that command in a variable. We can do this by wrapping the command in a dollar sign and parentheses (`$( )`) around a command.
 
 ```{r, engine='bash', eval=TRUE}
 state_n=$(cat states.txt | wc -l)
@@ -677,23 +725,25 @@ echo "There are $state_n lines in states.txt"
 
 
 ---
+# User input for bash scripts
 
-#### User input for bash scripts
+## Positional input
 
 ```{r, engine='bash', eval=TRUE}
 cat var.sh
 ```
 
-Now let's try running the script a few times in a few different ways:
+Now let's try running the script:
 
-```{r, engine='bash', eval=FALSE}
+```{r, engine='bash', eval=TRUE}
 bash var.sh a bbb c
 ```
 
-You could also ask users to type in a string on the command line by 
-temporarily stopping the execution of your program using
-the `read` command. Let's write a small script where you can see how 
-the read command works:
+---
+
+## Interactive input
+
+You could also ask users to type in a string on the command line by temporarily stopping the execution of your program using the `read` command. Let's write a small script where you can see how the read command works:
 
 ```{r, engine='bash', eval=TRUE}
 cat letsread.sh
@@ -703,23 +753,15 @@ cat letsread.sh
 bash letsread.sh
 ```
 
-
-Now that you know how to pass arguments to your scripts you can start writing 
-your own command line tools!
+Now that you know how to pass arguments to your scripts you can start writing your own command line tools!
 
 
 ---
+# Conditional Execution
 
+When writing computer programs it is often useful for your program to be able to make decisions based on some inputs. 
 
-
-### Conditional Execution
-
-When writing computer programs it is often useful for your program to be able to
-make decisions based on inputs like arguments, files, and environmental
-variables. Bash provides mechanisms for creating **logical expressions** which
-resemble mathematical equations. These logical expressions can be evaluated
-until they are either true or false. If I enter the name
-of a command that does not exist into the terminal, then I'll see an error:
+The **exit status** informs you if something works as expected. If I enter the name of a command that does not exist into the terminal, then I'll see an error (not zero):
 
 ```{r, engine='bash', error=TRUE}
 this_command_does_not_exist
@@ -730,10 +772,13 @@ The exit status of the last program run is stored in the question mark
 variable (`$?`). What's the exit status of a program that
 runs successfully? Let's take a look:
 
-```{r, engine='bash', eval=FALSE}
+```{r, engine='bash', eval=TRUE}
 echo I will succeed.
 echo $?
 ```
+
+
+---
 
 `true` and `false` are also bash commands that gives specific exit codes
 
@@ -744,14 +789,12 @@ false
 echo $?
 ```
 
-Knowing the exit status of these programs is important when discussing the
-**logical operators**: the AND operator (`&&`) and the OR operator (`||`). The
-AND and OR operators can be used for conditional execution of programs on the
-command line. Conditional execution occurs when the execution of one program
-depends on the exit status of another program. For example in the case of the
-AND operator, the program on the right hand side of `&&` will only be executed
-if the program on the left hand side of `&&` has an exit status of 0. Let's
-take a look at some small examples:
+---
+# AND / OR operators
+
+Conditional execution occurs when the execution of one program depends on the exit status of another program. 
+
+For example in the case of the AND operator, the program on the right hand side of `&&` will only be executed if the program on the left hand side of `&&` has an exit status of 0. 
 
 ```{r, engine='bash', eval=TRUE, error=TRUE}
 true && echo "Program 1 was executed."
@@ -759,33 +802,26 @@ false && echo "Program 2 was executed."
 ```
 
 
-The OR operator (`||`) follows a similar set of principles. Commands on the right
-hand side of `||` are only executed if the command on the left hand side *fails*
-and therefore has an exit status other than 0. Let's take a look at how this
-works:
+The OR operator (`||`) follows a similar set of principles. Commands on the right hand side of `||` are only executed if the command on the left hand side *fails* and therefore has an exit status other than 0. Let's take a look at how this works:
 
 ```{r, engine='bash', eval=TRUE}
 true || echo "Program 1 was executed."
 false || echo "Program 2 was executed."
 ```
 
-By combining AND and OR operators you can precisely control the conditions for
-when certain commands should be executed.
+By combining AND and OR operators you can precisely control the conditions for when certain commands should be executed.
+
+There's also the NOT operator `!`, which inverts the value of any conditional expression. 
+
 
 ---
 
 
-#### Conditional Expressions
+# Conditional Expressions
 
-You can also construct **conditional expressions** which are logical statements 
-that are either equivalent to `true` or `false`. 
+You can also construct **conditional expressions** which are logical statements that are either equivalent to `true` or `false`. Conditional expressions are always between double brackets (`[[ ]]`). 
 
-Conditional expressions either compare two values. Conditional expressions are
-always between double brackets (`[[ ]]`), and they either use **logical flags**
-or **logical operators**. For example, there are several logical flags you could
-use for comparing two integers. If we wanted to see if one integer was greater
-than another we could use `-gt`, the **g**reater **t**han flag. Enter this
-simple conditional expression into the command line:
+For example, if we wanted to see if one integer was greater than another we could use `-gt`, the **g**reater **t**han flag. 
 
 ```{r, engine='bash', eval=TRUE, error=TRUE}
 [[ 4 -gt 3 ]]
@@ -794,44 +830,26 @@ echo $?
 echo $?
 ```
 
-These **binary** logical expressions compare two values, but there are also
-**unary** logical expressions that only look at one value. For example, you can
-test whether or not a file exists using the `-e` logical flag. Let's take a look
-at this flag in action:
+These **binary** logical expressions compare two values, but there are also **unary** logical expressions that only look at one value. For example, you can test whether or not a file exists using the `-e` logical flag. Let's take a look at this flag in action:
 
 ```{r, engine='bash', eval=FALSE}
 [[ -e var.sh ]] && echo t || echo f
 ```
 
-
-| Logical Flag | Meaning | Usage |
-|:-------------|:--------|:------|
-| -gt | **G**reater **T**han | `[[ $planets -gt 8 ]]` |
-| -ge | **G**reater Than or **E**qual To | `[[ $votes -ge 270 ]]` |
-| -eq | **Eq**ual | `[[ $fingers -eq 10 ]]` |
-| -ne | **N**ot **E**qual | `[[ $pages -ne 0 ]]` |
-| -le | **L**ess Than or **E**qual To | `[[ $candles -le 9 ]]` |
-| -lt | **L**ess **T**han | `[[ $wives -lt 2 ]]` |
-| -e | A File **E**xists | `[[ -e $taxes_2016 ]]` |
-| -d | A **D**irectory Exists | `[[ -d $photos ]]` |
-| -z | Length of String is **Z**ero | `[[ -z $name ]]` |
-| -n | Length of String is **N**on-Zero | `[[ -n $name ]]` |
-
-
-There's also the NOT operator `!`, which inverts the value of any conditional
-expression. 
+For more choices for logical flags and expressions, check [here](https://opensource.com/article/19/10/programming-bash-logical-operators-shell-expansions)
 
 ---
 
-#### If and Else Statements
+# If-else Statements
 
-- IF statements evaluate conditional expressions. If an expression is true then
-the code within an IF statement is executed, otherwise it is skipped.
-- ELIF and ELSE statements also help control the flow of a Bash program, and IF
-statements can be nested within other IF statements.
+- IF statements evaluate conditional expressions. If an expression is true then the code within an IF statement is executed, otherwise it is skipped.
 
-An example to find the largest number of all three user inputs. Please be 
-careful about the identation.
+- ELIF and ELSE statements also help control the flow of a Bash program, and IF statements can be nested within other IF statements.
+
+
+---
+
+An example to find the largest number of all three user inputs. Please be careful about the identation.
 
 ```{r engine="bash", eval=TRUE}
 cat guess.sh
@@ -847,6 +865,8 @@ Material for bash scripting is adapted from:
 
 ---
 
-# Sign up for Odyssey
+# Please signup for Odyssey!
+
+Thanks for all your questions.
 
 
